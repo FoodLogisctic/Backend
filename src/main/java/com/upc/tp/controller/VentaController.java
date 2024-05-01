@@ -68,7 +68,7 @@ public class VentaController {
         }
         return new ResponseEntity<Venta>(a,HttpStatus.OK);
     }
-    @GetMapping("/ventasFecha/{fecha}") //http://localhost:8080/api/authors
+    @GetMapping("/ventasFecha/{fecha}")
     public ResponseEntity<List<VentaDTO>> listVentaFecha(@PathVariable(value = "fecha")LocalDate fecha){ //wrapper
         List<Venta> l;
         List<VentaDTO> listDto;
@@ -82,7 +82,7 @@ public class VentaController {
         }
         return new ResponseEntity<List<VentaDTO>>(listDto,HttpStatus.OK);
     }
-    @GetMapping("/ventasMonto/{monto}") //http://localhost:8080/api/authors
+    @GetMapping("/ventasMonto/{monto}")
     public ResponseEntity<List<VentaDTO>> listVentaMonto(@PathVariable(value = "monto")double monto){ //wrapper
         List<Venta> l;
         List<VentaDTO> listDto;
@@ -96,7 +96,7 @@ public class VentaController {
         }
         return new ResponseEntity<List<VentaDTO>>(listDto,HttpStatus.OK);
     }
-    @GetMapping("/ventasFechas/{fecha1}/{fecha2}") //http://localhost:8080/api/authors
+    @GetMapping("/ventasFechas/{fecha1}/{fecha2}")
     public ResponseEntity<List<VentaDTO>> listVentasMes(@PathVariable(value = "fecha1")LocalDate fecha1,
                                                          @PathVariable(value = "fecha2")LocalDate fecha2){ //wrapper
         List<Venta> l;
