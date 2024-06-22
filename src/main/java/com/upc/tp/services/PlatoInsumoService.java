@@ -1,5 +1,7 @@
 package com.upc.tp.services;
 
+import com.upc.tp.dto.CompraInsumoDetailsDTO;
+import com.upc.tp.dto.PlatoInsumoDetails;
 import com.upc.tp.entities.PlatoInsumo;
 import com.upc.tp.keys.PlatoInsumoKey;
 import com.upc.tp.repositories.PlatoInsumoRepository;
@@ -19,6 +21,8 @@ public class PlatoInsumoService {
     public List<PlatoInsumo> list(){
         return  platoInsumoRepository.findAll();
     }
+    public List<PlatoInsumoDetails> listDetails(){return platoInsumoRepository.listDetails();}
+
     public PlatoInsumo searchId(PlatoInsumoKey id) throws Exception{
         return platoInsumoRepository.findById(id).orElseThrow(()->new Exception("No hay"));
     }

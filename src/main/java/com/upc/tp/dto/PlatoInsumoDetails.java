@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InsumoCantidadDTO {
+public class PlatoInsumoDetails {
+    private String namePlato;
     private String nombre;
-    private int cantidad;
+    private long cantidad_insumo;
 }

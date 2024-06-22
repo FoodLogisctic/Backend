@@ -28,4 +28,7 @@ public class Insumo {
     private char perecible;
     @Column
     private LocalDate fechaVencimiento;
+
+    @OneToMany(mappedBy = "insumo")
+    private Set<CompraInsumo> compraInsumos;
 }

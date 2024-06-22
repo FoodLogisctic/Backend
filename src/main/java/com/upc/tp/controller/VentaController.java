@@ -6,14 +6,17 @@ import com.upc.tp.entities.Venta;
 import com.upc.tp.services.VentaService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+@CrossOrigin(origins = {"http://localhost:4200"})
 
 @RestController
 @RequestMapping("/api")
@@ -25,6 +28,7 @@ public class VentaController {
         VentaDTO ventaDTO = modelMapper.map(venta, VentaDTO.class);
         return ventaDTO;
     }
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('MOZO') or hasAuthority('JEFE VENTAS')")
     @PostMapping("/venta")
     public ResponseEntity<VentaDTO> insert(@RequestBody VentaDTO ventaDTO){
         ModelMapper modelMapper = new ModelMapper();
@@ -69,7 +73,7 @@ public class VentaController {
         return new ResponseEntity<Venta>(a,HttpStatus.OK);
     }
     @GetMapping("/ventasFecha/{fecha}")
-    public ResponseEntity<List<VentaDTO>> listVentaFecha(@PathVariable(value = "fecha")LocalDate fecha){ //wrapper
+    public ResponseEntity<List<VentaDTO>> listVentaFecha(@PathVariable(value = "fecha") /*@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)*/LocalDate fecha){ //wrapper
         List<Venta> l;
         List<VentaDTO> listDto;
         try {
@@ -111,5 +115,16 @@ public class VentaController {
         }
         return new ResponseEntity<List<VentaDTO>>(listDto,HttpStatus.OK);
     }
-
+    @GetMapping("/venta/{id}")
+    public ResponseEntity<VentaDTO> obtenerEntidad(@PathVariable(value = "id") Long id){
+        Venta venta;
+        VentaDTO ventaDTO;
+        try {
+            venta = ventaService.searchId(id);
+            ventaDTO = convertToDto(venta);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mi mensaje");
+        }
+        return new ResponseEntity<VentaDTO>(ventaDTO, HttpStatus.OK);
+    }
 }

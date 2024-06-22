@@ -1,6 +1,8 @@
 package com.upc.tp.controller;
 
+import com.upc.tp.dto.PlatoInsumoDetails;
 import com.upc.tp.dto.VentaPlatoDTO;
+import com.upc.tp.dto.VentaPlatoDetailsDTO;
 import com.upc.tp.entities.VentaPlato;
 import com.upc.tp.keys.VentaPlatoKey;
 import com.upc.tp.services.VentaPlatoService;
@@ -8,18 +10,20 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+@CrossOrigin(origins = {"http://localhost:4200"})
 
 @RestController
 @RequestMapping("/api")
 public class VentaPlatoController {
     @Autowired
     private VentaPlatoService ventaPlatoService;
-
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('MOZO') or hasAuthority('JEFE VENTAS')")
     @PostMapping("/ventaPlato")
     public ResponseEntity<VentaPlatoDTO> insert(@RequestBody VentaPlatoDTO ventaPlatoDTO){  //wrapper
         ModelMapper modelMapper=new ModelMapper();
@@ -52,6 +56,12 @@ public class VentaPlatoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
         return new ResponseEntity<List<VentaPlatoDTO>>(listDto,HttpStatus.OK);
+    }
+
+    @GetMapping("/vpDetails")
+    public ResponseEntity<List<VentaPlatoDetailsDTO>> listDetails(){ //wrapper
+        List<VentaPlatoDetailsDTO> list = ventaPlatoService.listDetails();
+        return new ResponseEntity<>(list,HttpStatus.OK);
     }
 
     @PutMapping("/ventaPlato")

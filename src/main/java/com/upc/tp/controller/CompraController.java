@@ -7,18 +7,20 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+@CrossOrigin(origins = {"http://localhost:4200"})
 
 @RestController
 @RequestMapping("/api")
 public class CompraController {
     @Autowired
     private CompraService compraService;
-
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('JEFE VENTAS')")
     @PostMapping("/compra")
     public ResponseEntity<CompraDTO> insert(@RequestBody CompraDTO compraDTO){  //wrapper
         ModelMapper modelMapper=new ModelMapper();
@@ -73,5 +75,22 @@ public class CompraController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
         return new ResponseEntity<Compra>(a,HttpStatus.OK);
+    }
+    @GetMapping("/compra/{id}")
+    public ResponseEntity<CompraDTO> obtenerEntidad(@PathVariable(value = "id") Long id){
+        Compra compra;
+        CompraDTO compraDTO;
+        try {
+            compra = compraService.searchId(id);
+            compraDTO = convertToDto(compra);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mi mensaje");
+        }
+        return new ResponseEntity<CompraDTO>(compraDTO, HttpStatus.OK);
+    }
+    private CompraDTO convertToDto(Compra compra) {
+        ModelMapper modelMapper = new ModelMapper();
+        CompraDTO compraDTO = modelMapper.map(compra, CompraDTO.class);
+        return compraDTO;
     }
 }

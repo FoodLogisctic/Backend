@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+@CrossOrigin(origins = {"http://localhost:4200"})
 
 @RestController
 @RequestMapping("/api")
@@ -24,6 +26,7 @@ public class InsumoController {
     @Autowired
     private InsumoService insumoService;
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('JEFE VENTAS') or hasAuthority('JEFE COCINA')")
     @PostMapping("/insumo")
     public ResponseEntity<InsumoDTO> insert(@RequestBody InsumoDTO insumoDTO){
         ModelMapper modelMapper=new ModelMapper();
@@ -93,5 +96,22 @@ public class InsumoController {
     public ResponseEntity<List<InsumoFechaDTO>> listInsumosFecha(@PathVariable(value = "fecha")LocalDate fecha){
         List<InsumoFechaDTO> list=insumoService.listInsumoFecha(fecha);
         return new ResponseEntity<>(list,HttpStatus.OK);
+    }
+    @GetMapping("/insumo/{id}")
+    public ResponseEntity<InsumoDTO> obtenerEntidad(@PathVariable(value = "id") Long id){
+        Insumo insumo;
+        InsumoDTO insumoDTO;
+        try {
+            insumo = insumoService.searchId(id);
+            insumoDTO = convertToDto(insumo);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mi mensaje");
+        }
+        return new ResponseEntity<InsumoDTO>(insumoDTO, HttpStatus.OK);
+    }
+    private InsumoDTO convertToDto(Insumo insumo) {
+        ModelMapper modelMapper = new ModelMapper();
+        InsumoDTO insumoDTO = modelMapper.map(insumo, InsumoDTO.class);
+        return insumoDTO;
     }
 }

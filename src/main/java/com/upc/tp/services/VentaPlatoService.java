@@ -1,5 +1,7 @@
 package com.upc.tp.services;
 
+import com.upc.tp.dto.PlatoInsumoDetails;
+import com.upc.tp.dto.VentaPlatoDetailsDTO;
 import com.upc.tp.entities.VentaPlato;
 import com.upc.tp.keys.VentaPlatoKey;
 import com.upc.tp.repositories.VentaPlatoRepository;
@@ -20,6 +22,8 @@ public class VentaPlatoService {
     public List<VentaPlato> list(){
         return  ventaPlatoRepository.findAll();
     }
+    public List<VentaPlatoDetailsDTO> listDetails(){return ventaPlatoRepository.listDetails();}
+
     public VentaPlato searchId(VentaPlatoKey id) throws Exception{
         return ventaPlatoRepository.findById(id).orElseThrow(()->new Exception("No hay"));
     }

@@ -1,5 +1,6 @@
 package com.upc.tp.services;
 
+import com.upc.tp.dto.CompraInsumoDetailsDTO;
 import com.upc.tp.entities.CompraInsumo;
 import com.upc.tp.keys.CompraInsumoKey;
 import com.upc.tp.repositories.CompraInsumoRepository;
@@ -21,6 +22,7 @@ public class CompraInsumoService {
     public CompraInsumo searchId(CompraInsumoKey id) throws Exception{
         return compraInsumoRepository.findById(id).orElseThrow(()->new Exception("No hay"));
     }
+    public List<CompraInsumoDetailsDTO> listDetails(){return compraInsumoRepository.listDetails();}
     public CompraInsumo save(CompraInsumo compraInsumo)throws Exception{
         searchId(compraInsumo.getId());
         return compraInsumoRepository.save(compraInsumo);

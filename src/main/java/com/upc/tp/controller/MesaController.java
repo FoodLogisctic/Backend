@@ -7,11 +7,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+@CrossOrigin(origins = {"http://localhost:4200"})
 
 @RestController
 @RequestMapping("/api")
@@ -23,7 +25,7 @@ public class MesaController {
         MesaDTO mesaDTO = modelMapper.map(mesa, MesaDTO.class);
         return mesaDTO;
     }
-
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('MOZO')")
     @PostMapping("/mesa")
     public ResponseEntity<MesaDTO> insert(@RequestBody MesaDTO mesaDTO){
         ModelMapper modelMapper = new ModelMapper();
@@ -62,5 +64,18 @@ public class MesaController {
         Mesa m;
         m = mesaService.delete(id);
         return new ResponseEntity<Mesa>(m, HttpStatus.OK);
+    }
+
+    @GetMapping("/mesa/{id}")
+    public ResponseEntity<MesaDTO> obtenerEntidad(@PathVariable(value = "id") Long id){
+        Mesa mesa;
+        MesaDTO mesaDTO;
+        try {
+            mesa = mesaService.searchId(id);
+            mesaDTO = convertToDto(mesa);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mi mensaje");
+        }
+        return new ResponseEntity<MesaDTO>(mesaDTO, HttpStatus.OK);
     }
 }

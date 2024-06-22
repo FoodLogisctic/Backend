@@ -26,4 +26,7 @@ public class Compra {
     private Long telefProveedor;
     @Column(nullable = false)
     private double monto;
+
+    @OneToMany(mappedBy = "compra")
+    private Set<CompraInsumo> compraInsumos;
 }

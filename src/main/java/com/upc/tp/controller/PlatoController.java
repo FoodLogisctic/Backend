@@ -8,18 +8,20 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+@CrossOrigin(origins = {"http://localhost:4200"})
 
 @RestController
 @RequestMapping("/api")
 public class PlatoController {
     @Autowired
     private PlatoService platoService;
-
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('JEFE VENTAS') or hasAuthority('JEFE COCINA')")
     @PostMapping("/plato")
     public ResponseEntity<PlatoDTO> insert(@RequestBody PlatoDTO platoDTO) {
         ModelMapper modelMapper = new ModelMapper();
@@ -70,5 +72,17 @@ public class PlatoController {
     public ResponseEntity<List<InsumoPlatoDTO>> listInsumosPlato(@PathVariable(value = "plato") String plato){
         List<InsumoPlatoDTO> list=platoService.listInsumosPlatos(plato);
         return new ResponseEntity<>(list,HttpStatus.OK);
+    }
+    @GetMapping("/plato/{id}")
+    public ResponseEntity<PlatoDTO> obtenerEntidad(@PathVariable(value = "id") Long id){
+        Plato plato;
+        PlatoDTO platoDTO;
+        try {
+            plato = platoService.searchId(id);
+            platoDTO = convertToDto(plato);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mi mensaje");
+        }
+        return new ResponseEntity<PlatoDTO>(platoDTO, HttpStatus.OK);
     }
 }

@@ -16,5 +16,4 @@ public class PlatoInsumoDTO {
     private Plato plato;
     private Insumo insumo;
     private long cantidad_insumo;
-    private char observaciones;
 }
